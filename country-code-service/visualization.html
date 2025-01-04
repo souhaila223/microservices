@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Country Code Validator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4">🌍 Country Code Validator</h1>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700">Enter Country Code</label>
+            <input 
+                type="text" 
+                id="countryCode" 
+                placeholder="Enter 2-letter country code (e.g., US, IN)"
+                class="w-full p-2 border rounded"
+            >
+        </div>
+        
+        <div class="flex space-x-2">
+            <button 
+                onclick="validateCountryCode()" 
+                class="flex-1 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            >
+                Validate
+            </button>
+            <button 
+                onclick="getRandomCountry()" 
+                class="flex-1 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            >
+                Random Country
+            </button>
+        </div>
+        
+        <div id="result" class="mt-4 p-3 bg-gray-100 rounded"></div>
+    </div>
+
+    <script>
+        async function validateCountryCode() {
+            const countryCode = document.getElementById('countryCode').value.toUpperCase();
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch(`http://localhost:5000/validate-country-code?code=${countryCode}`);
+                const data = await response.json();
+                
+                if (data.isValid) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-700">
+                            <p><strong>Country:</strong> ${data.countryName}</p>
+                            <p><strong>Code:</strong> ${data.alpha2Code}</p>
+                            <p><strong>Phone Code:</strong> ${data.phoneCode}</p>
+                            <p><strong>Example Number:</strong> ${data.phoneExample}</p>
+                            <p><strong>Continent:</strong> ${data.continent}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="text-red-500">
+                            <p>Invalid Country Code</p>
+                            <p>${data.error || 'No additional information'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function getRandomCountry() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('http://localhost:5000/random-country-code');
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="text-blue-700">
+                        <p><strong>Random Country:</strong> ${data.name}</p>
+                        <p><strong>Code:</strong> ${data.alpha2}</p>
+                        <p><strong>Phone Code:</strong> ${data.phone_code}</p>
+                        <p><strong>Continent:</strong> ${data.continent}</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

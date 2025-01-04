@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Number Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4">📱 Phone Number Generator</h1>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700">Country Code (Optional)</label>
+            <select id="countryCode" class="w-full p-2 border rounded">
+                <option value="">Random</option>
+                <option value="US">United States (+1)</option>
+                <option value="UK">United Kingdom (+44)</option>
+                <option value="IN">India (+91)</option>
+                <option value="AU">Australia (+61)</option>
+            </select>
+        </div>
+        
+        <button onclick="generatePhoneNumber()" 
+                class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+            Generate Phone Number
+        </button>
+        
+        <div id="result" class="mt-4 p-3 bg-gray-100 rounded"></div>
+    </div>
+
+    <script>
+        async function generatePhoneNumber() {
+            const countryCode = document.getElementById('countryCode').value;
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const url = countryCode 
+                    ? `http://localhost:3001/generate-phone-number?countryCode=${countryCode}`
+                    : 'http://localhost:3001/generate-phone-number';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p><strong>Phone Number:</strong> ${data.data.phoneNumber}</p>
+                    <p><strong>Type:</strong> ${data.data.type}</p>
+                    <p><strong>Generated At:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

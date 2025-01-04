@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Microservices API Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-6 text-center">🌐 Microservices API Gateway</h1>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-700 mb-2">Country Code (Optional)</label>
+                <input 
+                    type="text" 
+                    id="countryCode" 
+                    placeholder="Enter 2-letter country code (e.g., US, IN)"
+                    class="w-full p-2 border rounded"
+                >
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button 
+                    onclick="generateValidatedNumber()" 
+                    class="col-span-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                >
+                    Generate Validated Phone Number
+                </button>
+                <!-- <button 
+                    onclick="checkHealth()" 
+                    class="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                >
+                    Check Health
+                </button> -->
+            </div>
+
+            <div id="result" class="mt-4 p-3 bg-gray-100 rounded min-h-[150px]"></div>
+        </div>
+    </div>
+
+    <script>
+        async function generateValidatedNumber() {
+            const countryCode = document.getElementById('countryCode').value.toUpperCase();
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const url = countryCode 
+                    ? `http://localhost:4000/generate-validated-phone-number?countryCode=${countryCode}`
+                    : 'http://localhost:4000/generate-validated-phone-number';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.countryInfo) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-700">
+                            <h3 class="font-bold mb-2">Validated Phone Number</h3>
+                            <p><strong>Phone Number:</strong> ${data.phoneNumber.data.phoneNumber}</p>
+                            <p><strong>Country:</strong> ${data.countryInfo.countryName}</p>
+                            <p><strong>Country Code:</strong> ${data.countryInfo.alpha2Code}</p>
+                            <p><strong>Generated At:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="text-red-500">
+                            <p>Error: ${data.error}</p>
+                            <p>${data.message}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-500">Error: ${error.message}</p>`;
+            }
+        }
+
+        // async function checkHealth() {
+        //     const resultDiv = document.getElementById('result');
+            
+        //     try {
+        //         const response = await fetch('http://localhost:4000/health');
+        //         const data = await response.json();
+                
+        //         resultDiv.innerHTML = `
+        //             <div class="${data.status === 'healthy' ? 'text-green-700' : 'text-red-500'}">
+        //                 <h3 class="font-bold mb-2">Gateway Health Check</h3>
+        //                 <p><strong>Status:</strong> ${data.status.toUpperCase()}</p>
+        //                 <p><strong>Phone Number Service:</strong> ${data.services?.phoneNumber || 'Unknown'}</p>
+        //                 <p><strong>Country Code Service:</strong> ${data.services?.countryCode || 'Unknown'}</p>
+        //                 <p><strong>Checked At:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+        //             </div>
+        //         `;
+        //     } catch (error) {
+        //         resultDiv.innerHTML = `<p class="text-red-500">Health Check Failed: ${error.message}</p>`;
+        //     }
+        // }
+    </script>
+</body>
+</html>

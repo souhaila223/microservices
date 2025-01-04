@@ -1,0 +1,10 @@
+{
+    "include": [
+        "venv/Lib/site-packages"
+    ],
+    "reportMissingImports": false,
+    "strictListInference": true,
+    "strictDictionaryInference": true,
+    "strictParameterNoneValue": true,
+    "pythonVersion": "3.10"
+}
