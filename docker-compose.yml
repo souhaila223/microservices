@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - AUTH_SERVICE=http://auth-service:5001
+      - PHONE_NUMBER_SERVICE=http://phone-number-service:3001
+      - COUNTRY_CODE_SERVICE=http://country-code-service:5000
+    depends_on:
+      - auth-service
+      - phone-number-service
+      - country-code-service
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - MONGODB_URI=mongodb://mongodb:27017
+      - JWT_SECRET=your-secure-jwt-secret
+    depends_on:
+      - mongodb
+
+  phone-number-service:
+    build: ./phone-number-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+
+  country-code-service:
+    build: ./country-code-service
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+
+volumes:
+  mongodb_data:
