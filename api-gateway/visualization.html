@@ -212,12 +212,12 @@ async function generateBulkNumbers() {
         
         const data = await response.json();
         
-        if (data.phoneNumbers.data) {
+        if (data.phoneNumbers && data.phoneNumbers.data) {
             const numbers = data.phoneNumbers.data;
             // Store the data in our global variable
             currentTableData = numbers.map(num => [
                 num.phoneNumber,
-                data.countryInfo.countryName,
+                num.countryCode, // Changed from data.countryInfo.countryName
                 num.type,
                 new Date(data.timestamp).toLocaleString()
             ]);
@@ -241,6 +241,7 @@ async function generateBulkNumbers() {
             alert(data.error || 'Failed to generate numbers');
         }
     } catch (error) {
+        console.error('Error generating numbers:', error);
         alert('Failed to generate numbers: ' + error.message);
     }
 }
@@ -282,7 +283,7 @@ function downloadCSV(data) {
     link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    document.body.removeChild(link); 
     window.URL.revokeObjectURL(url);
 }
 

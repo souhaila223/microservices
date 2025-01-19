@@ -52,7 +52,7 @@ func main() {
     router.POST("/verify", handlers.HandleVerify)
 
     // Start server
-    port := getEnvOrDefault("PORT", "5001")
+    port := getEnvOrDefault("PORT", "5002")
     log.Printf("🔐 Auth Service running on port %s", port)
     log.Printf("🌐 Available at: http://localhost:%s", port)
     router.Run(":" + port)

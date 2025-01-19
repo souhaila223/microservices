@@ -30,7 +30,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Service URLs
-const AUTH_SERVICE = 'http://localhost:5001';
+const AUTH_SERVICE = 'http://localhost:5002';
 const PHONE_NUMBER_SERVICE = 'http://localhost:3001';
 const COUNTRY_CODE_SERVICE = 'http://localhost:5000';
 
@@ -63,11 +63,11 @@ const authenticate = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     
-    const verifyResponse = await axios.post(`${AUTH_SERVICE}/verify`, { token });
-    
-    if (!verifyResponse.data.valid) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
+    const verifyResponse = await axios.post(`${AUTH_SERVICE}/verify`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
     req.user = verifyResponse.data.user;
     next();

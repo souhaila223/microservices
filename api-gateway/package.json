@@ -1,7 +1,6 @@
 {
   "name": "api-gateway",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -15,7 +14,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "express-rate-limit": "^7.4.1",
+    "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
     "http-proxy-middleware": "^3.0.3",
     "json2csv": "^6.0.0-alpha.2",
@@ -27,5 +26,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
-  }
+  },
+  "description": ""
 }
